@@ -1,14 +1,16 @@
 package com.example.projet_android_lp;
 
+import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import com.example.projet_android_lp.Activities.AddMusicNewActivity;
+import com.example.projet_android_lp.Decorations.VerticalSpaceItemDecoration;
 import com.example.projet_android_lp.Models.Musique;
 import com.example.projet_android_lp.Utils.MusicListAdapter;
 import com.example.projet_android_lp.Utils.MyMusicPlayerViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,16 +20,26 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final int VERTICAL_ITEM_SPACE = 48;
     private MyMusicPlayerViewModel myMusicPlayerViewModel;
     public static final int NEW_MYMUSICPLAYER_ACTIVITY_REQUEST_CODE = 1;
 
@@ -52,26 +64,20 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        recyclerView.addItemDecoration(new VerticalSpaceItemDecoration(VERTICAL_ITEM_SPACE));
+
         myMusicPlayerViewModel = ViewModelProviders.of(this).get(MyMusicPlayerViewModel.class);
+
+        this.FillDataBaseWithApi();
 
         myMusicPlayerViewModel.getAllMusiques().observe(this, new Observer<List<Musique>>() {
             @Override
             public void onChanged(@Nullable final List<Musique> musiques) {
-                // Update the cached copy of the words in the adapter.
                 adapter.setMusiques(musiques);
-                TextView textView = findViewById(R.id.textView3);
-                textView.setText("nb elements via getAllWords : "+musiques.size());
+                TextView textView = findViewById(R.id.txtBoxNbMusique);
+                textView.setText("Nombre de musiques : "+musiques.size());
             }
         });
-        myMusicPlayerViewModel.getNbMusique().observe(this, new Observer<Integer>() {
-            @Override
-            public void onChanged(@Nullable Integer integer) {
-                TextView textView = findViewById(R.id.textView4);
-                textView.setText("nb elements via observer : "+integer);
-            }
-        });
-
-        this.FillDataBaseWithApi();
     }
 
     @Override
@@ -118,12 +124,155 @@ public class MainActivity extends AppCompatActivity {
         myMusicPlayerViewModel.deleteAllMusiques();
     }
 
-    public void nbElements(View view){
-        TextView textView = findViewById(R.id.textView2);
-        textView.setText(myMusicPlayerViewModel.nbMusiques().toString());
-    }
-
     public void FillDataBaseWithApi(){
+        URL url = this.createUrl();
+        new GetTrackTask(this).execute(url);
 
     }
+
+    private URL createUrl(){
+        String baseUrl = "http://ws.audioscrobbler.com/2.0/?method=track.search&track=";
+        try {
+            String urlString = baseUrl + URLEncoder.encode("Slipknot", "utf8") + "&api_key=" + getResources().getString(R.string.key) + "&format=json";
+            return new URL(urlString);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+
+    /**
+     * GetWeatherTask
+     */
+    private class GetTrackTask extends AsyncTask<URL, Void, JSONObject> {
+        private Context context;
+
+        public GetTrackTask(Context context) {
+            this.context = context;
+        }
+
+        @Override
+        protected JSONObject doInBackground(URL... urls) {
+            HttpURLConnection connection = null;
+            try {
+                connection = (HttpURLConnection) urls[0].openConnection();
+                connection.setConnectTimeout(5000);
+                Integer reponse = connection.getResponseCode();
+                if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                    final StringBuilder builder = new StringBuilder();
+                    try (BufferedReader reader = new BufferedReader(
+                            new InputStreamReader(connection.getInputStream())
+                    )) {
+                        String line;
+                        while ((line = reader.readLine()) != null) {
+                            builder.append(line);
+                        }
+                    }
+                    catch (Exception e) {
+                        Log.d("MesLogs", "pb connexion");
+                    }
+
+                    return new JSONObject(builder.toString());
+                }
+            }
+            catch (Exception e) {
+                Log.d("MesLogs", "Pb connexion");
+            }
+            finally {
+                connection.disconnect();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(JSONObject tracks) {
+            if (tracks != null) {
+                Integer nbTrackFind = this.getNbTrackFind(tracks);
+                String artiste = "";
+                String titre = "";
+                if (nbTrackFind != 0) {
+                    for (int i = 0; i < nbTrackFind; i++){
+                        artiste = this.getArtiste(tracks, i);
+                        titre = this.getTitre(tracks, i);
+                        try {
+                            Musique musique = new Musique(artiste.toString(),
+                                    titre.toString(),
+                                    "none",
+                                    0,
+                                    "none");
+                            myMusicPlayerViewModel.insertMusique(musique);
+                        }catch (Exception e){
+                            Log.d("MesLogs", "Erreur Insertion Musique dans DB");
+                        }
+                    }
+                }
+
+
+
+
+
+            }
+        }
+
+        /**
+         * getNbTrackFind
+         * @param object
+         * @return
+         */
+        private Integer getNbTrackFind(JSONObject object){
+            try {
+                JSONObject results = object.getJSONObject("results");
+                Integer nbTotal = results.getInt("opensearch:totalResults");
+                if (nbTotal> 0 && nbTotal<=30){
+                    return nbTotal;
+                }else if (nbTotal>30){
+                    return 30;
+                }else{
+                    return 0;
+                }
+            }catch (Exception e){
+                Log.d("MesLogs", "Pb JSON");
+            }
+            return null;
+        }
+
+        /**
+         * getArtiste
+         * @param object
+         * @return
+         */
+        private String getArtiste(JSONObject object, Integer id) {
+            try {
+                JSONArray results = object.getJSONObject("results").getJSONObject("trackmatches").getJSONArray("track");
+                JSONObject track = results.getJSONObject(id);
+                return track.getString("artist");
+            }
+            catch (Exception e) {
+                Log.d("MesLogs", "pb JSON");
+            }
+            return null;
+        }
+
+        /**
+         * getTitre
+         * @param object
+         * @return
+         */
+        private String getTitre(JSONObject object, Integer id) {
+            try {
+                JSONArray results = object.getJSONObject("results").getJSONObject("trackmatches").getJSONArray("track");
+                JSONObject track = results.getJSONObject(id);
+                return track.getString("name");
+            }
+            catch (Exception e) {
+                Log.d("MesLogs", "pb JSON");
+            }
+            return null;
+        }
+    }
+
+
 }

@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorAccent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".MainActivity"
     tools:showIn="@layout/activity_main">
@@ -13,17 +14,20 @@
         android:layout_width="193dp"
         android:layout_height="40dp"
         android:layout_marginTop="16dp"
-        android:text="Tout supprimer"
         android:onClick="deleteAll"
+        android:text="Tout supprimer"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewMusic"
-        android:layout_width="379dp"
-        android:layout_height="567dp"
-        android:layout_marginStart="16dp"
+        android:layout_width="415dp"
+        android:layout_height="502dp"
+        android:background="@color/colorAccent"
+        android:clipToPadding="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -32,32 +36,15 @@
         app:layout_constraintVertical_bias="1.0" />
 
     <TextView
-        android:id="@+id/textView3"
-        android:layout_width="57dp"
-        android:layout_height="18dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="24dp"
-        android:text="TextView"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/textView4"
-        android:layout_width="57dp"
-        android:layout_height="18dp"
-        android:layout_marginStart="324dp"
-        android:layout_marginTop="24dp"
-        android:text="TextView"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="57dp"
-        android:layout_height="18dp"
-        android:layout_marginStart="324dp"
+        android:id="@+id/txtBoxNbMusique"
+        android:layout_width="182dp"
+        android:layout_height="30dp"
         android:layout_marginTop="64dp"
         android:text="TextView"
+        app:layout_constraintBottom_toBottomOf="@+id/recyclerViewMusic"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

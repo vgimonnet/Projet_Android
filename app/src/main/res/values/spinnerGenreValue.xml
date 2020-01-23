@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="genres_array">
+        <item>Disco</item>
+        <item>Blues</item>
+        <item>Funk</item>
+        <item>Jazz</item>
+        <item>Metal</item>
+        <item>Pop</item>
+        <item>Punk</item>
+        <item>Rap</item>
+        <item>Rock \'n\' roll</item>
+        <item>Country</item>
+        <item>Reggae</item>
+        <item>Afro</item>
+        <item>Raï</item>
+        <item>Ska</item>
+        <item>Gospel</item>
+        <item>Soul</item>
+        <item>Kompa</item>
+        <item>Classique</item>
+        <item>R\’n\’B</item>
+        <item>Electro</item>
+        <item>K-pop</item>
+        <item>Zouk</item>
+        <item>Makossa</item>
+        <item>Musique Indi</item>
+        <item>Musique Latino</item>
+    </string-array>
+</resources>

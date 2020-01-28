@@ -17,6 +17,8 @@
         android:layout_marginTop="16dp"
         android:onClick="deleteAll"
         android:text="Tout supprimer"
+        android:drawableLeft="@android:drawable/ic_menu_delete"
+        android:background="@drawable/radius_button"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

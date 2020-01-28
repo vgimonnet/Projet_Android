@@ -18,7 +18,7 @@ public class Musique {
 
     @NonNull
     @ColumnInfo(name = "artiste")
-    private String artiste;
+    private long artisteRefId;
 
     @NonNull
     @ColumnInfo(name = "titre")
@@ -34,8 +34,8 @@ public class Musique {
     private String genre;
 
 
-    public Musique(String artiste, String titre, String album, int annee, String genre) {
-        this.artiste = artiste;
+    public Musique(long artiste, String titre, String album, int annee, String genre) {
+        this.artisteRefId = artiste;
         this.titre = titre;
         this.album = album;
         this.annee = annee;
@@ -54,12 +54,12 @@ public class Musique {
         this.id = id;
     }
 
-    public String getArtiste() {
-        return artiste;
+    public long getArtisteRefId() {
+        return artisteRefId;
     }
 
-    public void setArtiste(String artiste) {
-        this.artiste = artiste;
+    public void setArtisteRefId(long artiste) {
+        this.artisteRefId = artiste;
     }
 
     public String getTitre() {

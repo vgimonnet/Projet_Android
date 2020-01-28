@@ -92,6 +92,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        Log.d("Test", myMusicPlayerViewModel.getArtisteWithMusiques().toString());
+
         enableSwipeToDeleteAndUndo();
     }
 
@@ -120,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == NEW_MYMUSICPLAYER_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
+        /*if (requestCode == NEW_MYMUSICPLAYER_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
             Musique musique = new Musique(data.getStringExtra("1"),
                     data.getStringExtra("2"),
                     data.getStringExtra("3"),
@@ -132,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
                     getApplicationContext(),
                     R.string.empty_not_saved,
                     Toast.LENGTH_LONG).show();
-        }
+        }*/
     }
 
     public void deleteAll(View view){
@@ -213,12 +215,12 @@ public class MainActivity extends AppCompatActivity {
                         artiste = this.getArtiste(tracks, i);
                         titre = this.getTitre(tracks, i);
                         try {
-                            Musique musique = new Musique(artiste.toString(),
+                            /*Musique musique = new Musique(artiste.toString(),
                                     titre.toString(),
                                     "none",
                                     0,
                                     "none");
-                            myMusicPlayerViewModel.insertMusique(musique);
+                            myMusicPlayerViewModel.insertMusique(musique);*/
                         }catch (Exception e){
                             Log.d("MesLogs", "Erreur Insertion Musique dans DB");
                         }

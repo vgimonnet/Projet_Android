@@ -159,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     /**
-     * GetWeatherTask
+     * GetTrackTask
      */
     private class GetTrackTask extends AsyncTask<URL, Void, JSONObject> {
         private Context context;
@@ -224,11 +224,6 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 }
-
-
-
-
-
             }
         }
 

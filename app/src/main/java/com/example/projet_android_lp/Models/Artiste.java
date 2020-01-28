@@ -7,11 +7,10 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "artiste_table")
-
 public class Artiste {
     @PrimaryKey(autoGenerate = true)
     @NonNull
-    @ColumnInfo(name = "id")
+    @ColumnInfo(name = "artisteId")
     private long artisteId;
 
     @NonNull
@@ -27,7 +26,7 @@ public class Artiste {
     }
 
     public void setArtisteId(long artisteId) {
-        artisteId = artisteId;
+        this.artisteId = artisteId;
     }
 
     @NonNull

@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.projet_android_lp.Models.Artiste;
 import com.example.projet_android_lp.Models.Musique;
 import com.example.projet_android_lp.R;
 
@@ -27,7 +28,8 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.Musi
     }
 
     private final LayoutInflater mInflater;
-    private List<Musique> mMusiques; // Cached copy of words
+    private List<Musique> mMusiques; // Cached copy of musiques
+    private List<Artiste> mArtistes; // Cached copy of artistes
 
     public MusicListAdapter(Context context) { mInflater = LayoutInflater.from(context); }
 
@@ -41,7 +43,8 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.Musi
     public void onBindViewHolder(MusicViewHolder holder, int position) {
         if (mMusiques != null) {
             Musique current = mMusiques.get(position);
-            holder.txtArtiste.setText(current.getArtiste());
+            Artiste artiste =
+            holder.txtArtiste.setText(current.getArtisteRefId());
             holder.txtTitre.setText(current.getTitre());
 
         } else {

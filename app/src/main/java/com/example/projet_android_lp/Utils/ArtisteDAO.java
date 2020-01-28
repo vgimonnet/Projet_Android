@@ -8,6 +8,7 @@ import androidx.room.Transaction;
 
 import com.example.projet_android_lp.Models.Artiste;
 import com.example.projet_android_lp.Models.ArtisteWithMusiques;
+import com.example.projet_android_lp.Models.Musique;
 
 import java.util.List;
 
@@ -19,13 +20,13 @@ public interface ArtisteDAO {
     @Query("DELETE FROM artiste_table")
     void deleteAllArtiste();
 
-    @Query("SELECT * from artiste_table ORDER BY id ASC")
+    @Query("SELECT * FROM artiste_table ORDER BY artisteId ASC")
     LiveData<List<Artiste>> getAllArtistes();
 
-    @Query("SELECT count(*) from artiste_table")
+    @Query("SELECT count(*) FROM artiste_table")
     int nbArtiste();
 
-    @Query("SELECT count(*) from musique_table")
+    @Query("SELECT count(*) FROM artiste_table")
     LiveData<Integer> nbArtisteLD();
 
     @Transaction
@@ -35,4 +36,10 @@ public interface ArtisteDAO {
     @Transaction
     @Query("SELECT * FROM artiste_table")
     List<ArtisteWithMusiques> getArtisteWithPlaylists();
+
+    @Query("SELECT * FROM artiste_table WHERE artisteId=:id")
+    LiveData<Artiste> getArtisteById(long id);
+
+    @Query("SELECT * FROM artiste_table WHERE nom=:nom")
+    LiveData<Artiste> getArtisteByNom(String nom);
 }

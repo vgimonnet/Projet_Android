@@ -2,21 +2,28 @@ package com.example.projet_android_lp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
 import com.example.projet_android_lp.Activities.AddMusicNewActivity;
+import com.example.projet_android_lp.Decorations.SwipeToDeleteCallback;
 import com.example.projet_android_lp.Decorations.VerticalSpaceItemDecoration;
 import com.example.projet_android_lp.Models.Musique;
 import com.example.projet_android_lp.Utils.MusicListAdapter;
 import com.example.projet_android_lp.Utils.MyMusicPlayerViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -42,6 +49,9 @@ public class MainActivity extends AppCompatActivity {
     private static final int VERTICAL_ITEM_SPACE = 48;
     private MyMusicPlayerViewModel myMusicPlayerViewModel;
     public static final int NEW_MYMUSICPLAYER_ACTIVITY_REQUEST_CODE = 1;
+    public ConstraintLayout constraintLayout;
+    public MusicListAdapter adapter;
+    public RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        constraintLayout = findViewById(R.id.idForSwipeDelete);
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -59,8 +71,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        RecyclerView recyclerView = findViewById(R.id.recyclerViewMusic);
-        final MusicListAdapter adapter = new MusicListAdapter(this);
+        recyclerView = findViewById(R.id.recyclerViewMusic);
+        //final MusicListAdapter adapter = new MusicListAdapter(this);
+        adapter = new MusicListAdapter(this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -75,9 +88,11 @@ public class MainActivity extends AppCompatActivity {
             public void onChanged(@Nullable final List<Musique> musiques) {
                 adapter.setMusiques(musiques);
                 TextView textView = findViewById(R.id.txtBoxNbMusique);
-                textView.setText("Nombre de musiques : "+musiques.size());
+                textView.setText("Nombre de musiques : " + musiques.size());
             }
         });
+
+        enableSwipeToDeleteAndUndo();
     }
 
     @Override
@@ -275,4 +290,36 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    private void enableSwipeToDeleteAndUndo() {
+        SwipeToDeleteCallback swipeToDeleteCallback = new SwipeToDeleteCallback(this) {
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
+
+
+                final int position = viewHolder.getAdapterPosition();
+                final Musique musique = adapter.getData().get(position);
+
+                adapter.removeItem(position);
+
+
+                Snackbar snackbar = Snackbar
+                        .make(constraintLayout, "La musique a été supprimé de la liste..", Snackbar.LENGTH_LONG);
+                snackbar.setAction("ANNULER", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        adapter.restoreItem(musique, position);
+                        recyclerView.scrollToPosition(position);
+                    }
+                });
+
+                snackbar.setActionTextColor(Color.YELLOW);
+                snackbar.show();
+
+            }
+        };
+
+        ItemTouchHelper itemTouchhelper = new ItemTouchHelper(swipeToDeleteCallback);
+        itemTouchhelper.attachToRecyclerView(recyclerView);
+    }
 }

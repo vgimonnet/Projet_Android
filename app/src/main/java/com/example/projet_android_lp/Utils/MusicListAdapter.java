@@ -56,13 +56,25 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.Musi
         notifyDataSetChanged();
     }
 
-    // getItemCount() is called many times, and when it is first called,
-    // mWords has not been updated (means initially, it's null, and we can't return null).
     @Override
     public int getItemCount() {
         if (mMusiques != null)
             return mMusiques.size();
         else return 0;
+    }
+
+    public void removeItem(int position) {
+        mMusiques.remove(position);
+        notifyItemRemoved(position);
+    }
+
+    public void restoreItem(Musique item, int position) {
+        mMusiques.add(position, item);
+        notifyItemInserted(position);
+    }
+
+    public List<Musique> getData() {
+        return mMusiques;
     }
 
 }

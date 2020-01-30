@@ -45,5 +45,7 @@ public class MyMusicPlayerViewModel  extends AndroidViewModel {
     public Integer nbArtistes(){ return mRepository.getNbArtiste();}
 
     public LiveData<List<ArtisteWithMusiques>> getArtisteWithMusiques() { return artisteWithMusiques; }
+    public Artiste getArtisteById(long id){return mRepository.getArtisteById(id);}
+    public Artiste getArtisteByName(String name){return mRepository.getArtisteByName(name);}
 
 }

@@ -62,13 +62,16 @@ public abstract class MyMusicPlayerRoomDatabase extends RoomDatabase {
             Artiste artiste = new Artiste("Slipknot");
             artisteDAO.insertArtiste(artiste);
             artiste = new Artiste("Pennywise");
+            artisteDAO.insertArtiste(artiste);
 
 
             //Ajout de musique
             musiqueDAO.deleteAll();
             Musique musique = new Musique(0, "The Devil In I", "The Grey Chapter", 2014, "Metal");
             musiqueDAO.insert(musique);
-            musique = new Musique(1, "Unsainted", "We Are Not Your Kind", 2019, "Metal");
+            musique = new Musique(0, "Unsainted", "We Are Not Your Kind", 2019, "Metal");
+            musiqueDAO.insert(musique);
+            musique = new Musique(1, "Fuck Authority!", "Land Of The Free?", 2001, "Punk");
             musiqueDAO.insert(musique);
 
             return null;

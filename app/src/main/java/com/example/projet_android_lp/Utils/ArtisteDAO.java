@@ -37,9 +37,9 @@ public interface ArtisteDAO {
     @Query("SELECT * FROM artiste_table")
     List<ArtisteWithMusiques> getArtisteWithPlaylists();
 
-    @Query("SELECT * FROM artiste_table WHERE artisteId=:id")
-    LiveData<Artiste> getArtisteById(long id);
+    @Query("SELECT * FROM artiste_table WHERE artisteId=:id LIMIT 1")
+    Artiste getArtisteById(long id);
 
-    @Query("SELECT * FROM artiste_table WHERE nom=:nom")
-    LiveData<Artiste> getArtisteByNom(String nom);
+    @Query("SELECT * FROM artiste_table WHERE nom=:nom LIMIT 1")
+    Artiste getArtisteByNom(String nom);
 }

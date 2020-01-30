@@ -26,6 +26,7 @@ public class MyMusicPlayerRepository {
     MyMusicPlayerRepository(Application application) {
         MyMusicPlayerRoomDatabase db = MyMusicPlayerRoomDatabase.getDatabase(application);
         musiqueDAO = db.musiqueDAO();
+        artisteDAO = db.artisteDAO();
         allMusiques = musiqueDAO.getAllMusiques();
         nbMusiques = musiqueDAO.nbElementsLD();
         allArtistes = artisteDAO.getAllArtistes();
@@ -162,6 +163,48 @@ public class MyMusicPlayerRepository {
         @Override
         protected Integer doInBackground(Void... params){
             return  new Integer(mAsyncTaskDao.nbArtiste());
+        }
+    }
+
+
+    public Artiste getArtisteById(Long id){
+        try {
+            return new getArtisteByIdAsync(artisteDAO).execute(id).get();
+        }catch (Exception e) {
+            Log.d("MesLogs", "pb getArtisteById");
+        }
+        return null;
+    }
+
+    private static class getArtisteByIdAsync extends AsyncTask<Long, Void, Artiste>{
+        private ArtisteDAO mAsyncTaskDao;
+
+        getArtisteByIdAsync(ArtisteDAO dao){mAsyncTaskDao = dao;}
+
+        @Override
+        protected Artiste doInBackground(Long... params){
+            return mAsyncTaskDao.getArtisteById(params[0]);
+        }
+    }
+
+
+    public Artiste getArtisteByName(String name){
+        try {
+            return new getArtisteByNameAsync(artisteDAO).execute(name).get();
+        }catch (Exception e){
+            Log.d("MesLogs", "pb getArtisteByName");
+        }
+        return null;
+    }
+
+    private static class getArtisteByNameAsync extends AsyncTask<String, Void, Artiste>{
+        private ArtisteDAO mAsyncTaskDao;
+
+        getArtisteByNameAsync(ArtisteDAO dao){mAsyncTaskDao = dao;}
+
+        @Override
+        protected Artiste doInBackground(String... params){
+            return mAsyncTaskDao.getArtisteByNom(params[0]);
         }
     }
 }

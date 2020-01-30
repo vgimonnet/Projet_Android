@@ -1,11 +1,15 @@
 package com.example.projet_android_lp.Utils;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.projet_android_lp.Models.Artiste;
@@ -30,8 +34,17 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.Musi
     private final LayoutInflater mInflater;
     private List<Musique> mMusiques; // Cached copy of musiques
     private List<Artiste> mArtistes; // Cached copy of artistes
+    private MyMusicPlayerViewModel myMusicPlayerViewModel;
 
-    public MusicListAdapter(Context context) { mInflater = LayoutInflater.from(context); }
+    /*public MusicListAdapter(Context context, MyMusicPlayerViewModel viewModel) {
+        mInflater = LayoutInflater.from(context);
+        myMusicPlayerViewModel = viewModel;
+    }*/
+
+    public MusicListAdapter(Context context) {
+        mInflater = LayoutInflater.from(context);
+        myMusicPlayerViewModel = ViewModelProviders.of((FragmentActivity) context).get(MyMusicPlayerViewModel.class);
+    }
 
     @Override
     public MusicViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -43,8 +56,12 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.Musi
     public void onBindViewHolder(MusicViewHolder holder, int position) {
         if (mMusiques != null) {
             Musique current = mMusiques.get(position);
-            Artiste artiste =
-            holder.txtArtiste.setText(current.getArtisteRefId());
+            long id = current.getArtisteRefId();
+            Log.d("test", Long.toString(id));
+            Artiste artiste = mArtistes.get((int)id);
+            if (artiste != null){
+                holder.txtArtiste.setText(artiste.getNom());
+            }
             holder.txtTitre.setText(current.getTitre());
 
         } else {
@@ -56,6 +73,11 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.Musi
 
     public void setMusiques(List<Musique> musiques){
         mMusiques = musiques;
+        notifyDataSetChanged();
+    }
+
+    public void setArtistes(List<Artiste> artistes){
+        mArtistes = artistes;
         notifyDataSetChanged();
     }
 

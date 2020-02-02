@@ -68,6 +68,25 @@ public class MyMusicPlayerRepository {
         }
     }
 
+    public void deleteMusique (Musique musique) {
+        new deleteMusiqueAsyncTask(musiqueDAO).execute(musique);
+    }
+
+    private static class deleteMusiqueAsyncTask extends AsyncTask<Musique, Void, Void> {
+
+        private MusiqueDAO mAsyncTaskDao;
+
+        deleteMusiqueAsyncTask(MusiqueDAO dao) {
+            mAsyncTaskDao = dao;
+        }
+
+        @Override
+        protected Void doInBackground(final Musique... params) {
+            mAsyncTaskDao.delete(params[0]);
+            return null;
+        }
+    }
+
 
     public void deleteAllMusiques(){
         new deleteAllMusiquesAsyncTask(musiqueDAO).execute();

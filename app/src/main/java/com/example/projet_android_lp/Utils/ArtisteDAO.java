@@ -23,6 +23,9 @@ public interface ArtisteDAO {
     @Query("SELECT * FROM artiste_table ORDER BY artisteId ASC")
     LiveData<List<Artiste>> getAllArtistes();
 
+    @Query("SELECT * FROM artiste_table ORDER BY artisteId ASC")
+    List<Artiste> getAllArtistesWithoutLD();
+
     @Query("SELECT count(*) FROM artiste_table")
     int nbArtiste();
 

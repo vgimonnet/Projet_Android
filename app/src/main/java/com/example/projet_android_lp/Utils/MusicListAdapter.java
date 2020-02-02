@@ -56,11 +56,18 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.Musi
     public void onBindViewHolder(MusicViewHolder holder, int position) {
         if (mMusiques != null) {
             Musique current = mMusiques.get(position);
+            Log.d("test", "id artiste =  " + current.getArtisteRefId());
             long id = current.getArtisteRefId();
-            Log.d("test", Long.toString(id));
+            for (Artiste a: mArtistes
+                 ) {
+                Log.d("test", a.getNom() + " " + a.getArtisteId());
+            }
+
             Artiste artiste = mArtistes.get((int)id);
             if (artiste != null){
                 holder.txtArtiste.setText(artiste.getNom());
+            }else{
+                holder.txtArtiste.setText("Non renseigné");
             }
             holder.txtTitre.setText(current.getTitre());
 

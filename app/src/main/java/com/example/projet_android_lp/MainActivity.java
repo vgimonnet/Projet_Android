@@ -8,6 +8,7 @@ import android.os.Bundle;
 
 import com.example.projet_android_lp.Activities.AddMusicNewActivity;
 import com.example.projet_android_lp.Decorations.SwipeToDeleteCallback;
+import com.example.projet_android_lp.Decorations.SwipeToEditCallback;
 import com.example.projet_android_lp.Decorations.VerticalSpaceItemDecoration;
 import com.example.projet_android_lp.Models.Artiste;
 import com.example.projet_android_lp.Models.Musique;
@@ -81,7 +82,8 @@ public class MainActivity extends AppCompatActivity {
 
         recyclerView.addItemDecoration(new VerticalSpaceItemDecoration(VERTICAL_ITEM_SPACE));
         myMusicPlayerViewModel = ViewModelProviders.of(this).get(MyMusicPlayerViewModel.class);
-        this.FillDataBaseWithApi();
+
+
 
         myMusicPlayerViewModel.getAllMusiques().observe(this, new Observer<List<Musique>>() {
             @Override
@@ -99,7 +101,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        enableSwipeToDeleteAndUndo();
+        this.FillDataBaseWithApi();
+
+        this.enableSwipeToEdit();
+        this.enableSwipeToDeleteAndUndo();
     }
 
     @Override
@@ -127,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        /*if (requestCode == NEW_MYMUSICPLAYER_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
+        if (requestCode == NEW_MYMUSICPLAYER_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
             Long idArtiste = null;
             String nomArtiste = data.getStringExtra("1");
             String titre = data.getStringExtra("2");
@@ -139,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
                 idArtiste = getArtisteIdOrCreateIt(nomArtiste);
                 if(idArtiste != null){
                     Musique musique = new Musique(idArtiste,titre, album, annee, genre);
-                    //myMusicPlayerViewModel.insertMusique(musique);
+                    myMusicPlayerViewModel.insertMusique(musique);
                 }
             }
         } else {
@@ -147,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
                     getApplicationContext(),
                     R.string.empty_not_saved,
                     Toast.LENGTH_LONG).show();
-        }*/
+        }
     }
 
     public void deleteAll(View view){
@@ -163,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
     private URL createUrl(){
         String baseUrl = "http://ws.audioscrobbler.com/2.0/?method=track.search&track=";
         try {
-            String urlString = baseUrl + URLEncoder.encode("Slipknot", "utf8") + "&api_key=" + getResources().getString(R.string.key) + "&format=json";
+            String urlString = baseUrl + URLEncoder.encode("System-Of-A-Down", "utf8") + "&api_key=" + getResources().getString(R.string.key) + "&format=json";
             return new URL(urlString);
         }catch(Exception e){
             e.printStackTrace();
@@ -226,18 +231,17 @@ public class MainActivity extends AppCompatActivity {
                 if (nbTrackFind != 0) {
                     for (int i = 0; i < nbTrackFind; i++){
                         idArtiste = getArtisteIdOrCreateIt(this.getArtiste(tracks, i));
-                        Log.d("test", Long.toString(idArtiste));
-                        /*titre = this.getTitre(tracks, i);
+                        titre = this.getTitre(tracks, i);
                         try {
                             Musique musique = new Musique(idArtiste,
                                     titre.toString(),
                                     "none",
                                     0,
                                     "none");
-                            //myMusicPlayerViewModel.insertMusique(musique);
+                            myMusicPlayerViewModel.insertMusique(musique);
                         }catch (Exception e){
                             Log.d("MesLogs", "Erreur Insertion Musique dans DB");
-                        }*/
+                        }
                     }
                 }
             }
@@ -311,6 +315,7 @@ public class MainActivity extends AppCompatActivity {
                 final Musique musique = adapter.getData().get(position);
 
                 adapter.removeItem(position);
+                myMusicPlayerViewModel.deleteMusique(musique);
 
 
                 Snackbar snackbar = Snackbar
@@ -321,6 +326,7 @@ public class MainActivity extends AppCompatActivity {
 
                         adapter.restoreItem(musique, position);
                         recyclerView.scrollToPosition(position);
+                        myMusicPlayerViewModel.insertMusique(musique);
                     }
                 });
 
@@ -334,10 +340,44 @@ public class MainActivity extends AppCompatActivity {
         itemTouchhelper.attachToRecyclerView(recyclerView);
     }
 
+    private void enableSwipeToEdit() {
+        SwipeToEditCallback swipeToEditCallback= new SwipeToEditCallback(this) {
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
+
+
+                /*final int position = viewHolder.getAdapterPosition();
+                final Musique musique = adapter.getData().get(position);
+
+                adapter.removeItem(position);
+                myMusicPlayerViewModel.deleteMusique(musique);
+
+
+                Snackbar snackbar = Snackbar
+                        .make(constraintLayout, "La musique a été supprimé de la liste..", Snackbar.LENGTH_LONG);
+                snackbar.setAction("ANNULER", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        adapter.restoreItem(musique, position);
+                        recyclerView.scrollToPosition(position);
+                        myMusicPlayerViewModel.insertMusique(musique);
+                    }
+                });
+
+                snackbar.setActionTextColor(Color.YELLOW);
+                snackbar.show();
+*/
+            }
+        };
+
+        ItemTouchHelper itemTouchhelper = new ItemTouchHelper(swipeToEditCallback);
+        itemTouchhelper.attachToRecyclerView(recyclerView);
+    }
+
     public long getArtisteIdOrCreateIt(String nomArtiste){
         Long idArtiste = null;
         Artiste artiste = myMusicPlayerViewModel.getArtisteByName(nomArtiste);
-        Log.d("test", artiste.toString());
         if(artiste != null){
             idArtiste = artiste.getArtisteId();
         }else{
@@ -346,8 +386,7 @@ public class MainActivity extends AppCompatActivity {
             artiste = myMusicPlayerViewModel.getArtisteByName(nomArtiste);
             idArtiste = artiste.getArtisteId();
         }
-        Log.d("test", Long.toString(idArtiste) + "€");
-        return idArtiste;
+        return idArtiste-1;
     }
 
 }

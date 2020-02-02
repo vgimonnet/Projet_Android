@@ -4,9 +4,10 @@ package com.example.projet_android_lp.Models;
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "artiste_table")
+@Entity(tableName = "artiste_table", indices = {@Index(value = "nom", unique = true)})
 public class Artiste {
     @PrimaryKey(autoGenerate = true)
     @NonNull

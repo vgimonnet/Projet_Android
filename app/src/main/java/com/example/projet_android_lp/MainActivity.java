@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 
 import com.example.projet_android_lp.Activities.AddMusicNewActivity;
+import com.example.projet_android_lp.Activities.EditMusicNewActivity;
 import com.example.projet_android_lp.Decorations.SwipeToDeleteCallback;
 import com.example.projet_android_lp.Decorations.SwipeToEditCallback;
 import com.example.projet_android_lp.Decorations.VerticalSpaceItemDecoration;
@@ -33,6 +34,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,9 +53,12 @@ public class MainActivity extends AppCompatActivity {
     private static final int VERTICAL_ITEM_SPACE = 48;
     private MyMusicPlayerViewModel myMusicPlayerViewModel;
     public static final int NEW_MYMUSICPLAYER_ACTIVITY_REQUEST_CODE = 1;
+    public static final int EDIT_MYMUSICPLAYER_ACTIVITY_REQUEST_CODE = 2;
     public ConstraintLayout constraintLayout;
     public MusicListAdapter adapter;
     public RecyclerView recyclerView;
+    public SearchView searchViewTitre;
+    public SearchView searchViewArtiste;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,6 +110,39 @@ public class MainActivity extends AppCompatActivity {
 
         this.enableSwipeToEdit();
         this.enableSwipeToDeleteAndUndo();
+
+
+        //Mise en place de la recherche par titre
+        searchViewTitre = findViewById(R.id.searchViewTitre);
+        searchViewTitre.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                adapter.filterMusique(getApplicationContext(), query);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                adapter.filterMusique(getApplicationContext() ,newText);
+                return true;
+            }
+        });
+
+        //Mise en place de la recherche par artiste
+        searchViewArtiste = findViewById(R.id.searchViewArtiste);
+        searchViewArtiste.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                adapter.filterArtiste(getApplicationContext(), query);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                adapter.filterArtiste(getApplicationContext() ,newText);
+                return true;
+            }
+        });
     }
 
     @Override
@@ -132,6 +170,8 @@ public class MainActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        Log.d("test", Integer.toString(requestCode));
+
         if (requestCode == NEW_MYMUSICPLAYER_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
             Long idArtiste = null;
             String nomArtiste = data.getStringExtra("1");
@@ -145,6 +185,31 @@ public class MainActivity extends AppCompatActivity {
                 if(idArtiste != null){
                     Musique musique = new Musique(idArtiste,titre, album, annee, genre);
                     myMusicPlayerViewModel.insertMusique(musique);
+                }
+            }
+        } else if (requestCode == EDIT_MYMUSICPLAYER_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
+            Long idArtiste = null;
+            Long idMusique = Long.parseLong(data.getStringExtra("6"));
+            Musique musiqueToEdit = myMusicPlayerViewModel.getMusiqueById(idMusique);
+
+            if (musiqueToEdit != null) {
+                String nomArtiste = data.getStringExtra("1");
+                String titre = data.getStringExtra("2");
+                String album = data.getStringExtra("3");
+                int annee = Integer.parseInt(data.getStringExtra("4"));
+                String genre = data.getStringExtra("5");
+
+                if(nomArtiste != null && titre != null){
+                    idArtiste = getArtisteIdOrCreateIt(nomArtiste);
+                    if(idArtiste != null){
+                        //Musique musique = new Musique(idArtiste,titre, album, annee, genre);
+                        musiqueToEdit.setTitre(titre);
+                        musiqueToEdit.setAlbum(album);
+                        musiqueToEdit.setAnnee(annee);
+                        musiqueToEdit.setGenre(genre);
+                        musiqueToEdit.setArtisteRefId(idArtiste);
+                        myMusicPlayerViewModel.updateMusique(musiqueToEdit);
+                    }
                 }
             }
         } else {
@@ -346,28 +411,25 @@ public class MainActivity extends AppCompatActivity {
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
 
 
-                /*final int position = viewHolder.getAdapterPosition();
+                final int position = viewHolder.getAdapterPosition();
                 final Musique musique = adapter.getData().get(position);
 
+                Long idArtiste = musique.getArtisteRefId() + 1;
+
+                Artiste artiste = myMusicPlayerViewModel.getArtisteById(idArtiste);
+
+                Intent intent = new Intent(MainActivity.this, EditMusicNewActivity.class);
+                intent.putExtra("id", Long.toString(musique.getId()));
+                intent.putExtra("titre", musique.getTitre());
+                intent.putExtra("artiste", artiste.getNom());
+                intent.putExtra("album", musique.getAlbum());
+                intent.putExtra("annee", Integer.toString(musique.getAnnee()));
+                intent.putExtra("genre", musique.getGenre());
+                startActivityForResult(intent, EDIT_MYMUSICPLAYER_ACTIVITY_REQUEST_CODE);
+
                 adapter.removeItem(position);
-                myMusicPlayerViewModel.deleteMusique(musique);
-
-
-                Snackbar snackbar = Snackbar
-                        .make(constraintLayout, "La musique a été supprimé de la liste..", Snackbar.LENGTH_LONG);
-                snackbar.setAction("ANNULER", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-
-                        adapter.restoreItem(musique, position);
-                        recyclerView.scrollToPosition(position);
-                        myMusicPlayerViewModel.insertMusique(musique);
-                    }
-                });
-
-                snackbar.setActionTextColor(Color.YELLOW);
-                snackbar.show();
-*/
+                adapter.restoreItem(musique, position);
+                recyclerView.scrollToPosition(position);
             }
         };
 

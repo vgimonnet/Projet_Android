@@ -1,11 +1,14 @@
 package com.example.projet_android_lp.Utils;
 
+import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -16,6 +19,7 @@ import com.example.projet_android_lp.Models.Artiste;
 import com.example.projet_android_lp.Models.Musique;
 import com.example.projet_android_lp.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.MusicViewHolder> {
@@ -34,7 +38,9 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.Musi
     private final LayoutInflater mInflater;
     private List<Musique> mMusiques; // Cached copy of musiques
     private List<Artiste> mArtistes; // Cached copy of artistes
+    private ArrayList<Musique> mMusiquesCopy; // Cached copy of musiques
     private MyMusicPlayerViewModel myMusicPlayerViewModel;
+    private boolean search;
 
     /*public MusicListAdapter(Context context, MyMusicPlayerViewModel viewModel) {
         mInflater = LayoutInflater.from(context);
@@ -44,6 +50,8 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.Musi
     public MusicListAdapter(Context context) {
         mInflater = LayoutInflater.from(context);
         myMusicPlayerViewModel = ViewModelProviders.of((FragmentActivity) context).get(MyMusicPlayerViewModel.class);
+        search = false;
+        mMusiquesCopy = new ArrayList<>();
     }
 
     @Override
@@ -56,12 +64,7 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.Musi
     public void onBindViewHolder(MusicViewHolder holder, int position) {
         if (mMusiques != null) {
             Musique current = mMusiques.get(position);
-            Log.d("test", "id artiste =  " + current.getArtisteRefId());
             long id = current.getArtisteRefId();
-            for (Artiste a: mArtistes
-                 ) {
-                Log.d("test", a.getNom() + " " + a.getArtisteId());
-            }
 
             Artiste artiste = mArtistes.get((int)id);
             if (artiste != null){
@@ -72,7 +75,6 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.Musi
             holder.txtTitre.setText(current.getTitre());
 
         } else {
-            // Covers the case of data not being ready yet.
             holder.txtArtiste.setText("Aucun artiste");
             holder.txtTitre.setText("Aucun titre");
         }
@@ -108,5 +110,73 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.Musi
     public List<Musique> getData() {
         return mMusiques;
     }
+
+    public void filterMusique(Context context, String text){
+        if (!search){
+            search = true;
+            for(Musique item: mMusiques){
+                mMusiquesCopy.add(item);
+            }
+        }
+
+        if(text.isEmpty()){
+            mMusiques.clear();
+            mMusiques.addAll(mMusiquesCopy);
+            search = true;
+        } else{
+            ArrayList<Musique> result = new ArrayList<>();
+            text = text.toLowerCase();
+
+            for(Musique item: mMusiques){
+                if(item.getTitre().toLowerCase().contains(text)){
+                    result.add(item);
+                }
+            }
+            if(result.size()==0){
+                Toast.makeText(context, "Aucune musique ne correspond à cette recherche", Toast.LENGTH_SHORT).show();
+            }else{
+                mMusiques.clear();
+                mMusiques.addAll(result);
+            }
+        }
+        notifyDataSetChanged();
+    }
+
+    public void filterArtiste(Context context, String text){
+        if (!search){
+            search = true;
+            for(Musique item: mMusiques){
+                mMusiquesCopy.add(item);
+            }
+        }
+
+        if(text.isEmpty()){
+            mMusiques.clear();
+            mMusiques.addAll(mMusiquesCopy);
+            search = true;
+        } else{
+            Artiste artiste = myMusicPlayerViewModel.getArtisteByName(text);
+            if (artiste != null){
+                Long idArtiste = artiste.getArtisteId() - 1;
+                ArrayList<Musique> result = new ArrayList<>();
+                text = text.toLowerCase();
+
+                for(Musique item: mMusiques){
+                    if(item.getArtisteRefId() == idArtiste){
+                        result.add(item);
+                    }
+                }
+                if (result.size() == 0){
+                    Toast.makeText(context, "Aucune musique trouvé pour cette artiste", Toast.LENGTH_SHORT).show();
+                }else{
+                    mMusiques.clear();
+                    mMusiques.addAll(result);
+                }
+            }
+        }
+        notifyDataSetChanged();
+    }
+
+
 
 }

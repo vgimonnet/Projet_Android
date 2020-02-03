@@ -22,7 +22,7 @@ abstract public class SwipeToEditCallback extends ItemTouchHelper.Callback {
     private Paint mClearPaint;
     private ColorDrawable mBackground;
     private int backgroundColor;
-    private Drawable deleteDrawable;
+    private Drawable editDrawable;
     private int intrinsicWidth;
     private int intrinsicHeight;
 
@@ -33,9 +33,9 @@ abstract public class SwipeToEditCallback extends ItemTouchHelper.Callback {
         backgroundColor = Color.parseColor("#509cf2");
         mClearPaint = new Paint();
         mClearPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
-        deleteDrawable = ContextCompat.getDrawable(mContext, R.drawable.ic_edit);
-        intrinsicWidth = deleteDrawable.getIntrinsicWidth();
-        intrinsicHeight = deleteDrawable.getIntrinsicHeight();
+        editDrawable = ContextCompat.getDrawable(mContext, R.drawable.ic_edit);
+        intrinsicWidth = editDrawable.getIntrinsicWidth();
+        intrinsicHeight = editDrawable.getIntrinsicHeight();
 
 
     }
@@ -67,18 +67,18 @@ abstract public class SwipeToEditCallback extends ItemTouchHelper.Callback {
         }
 
         mBackground.setColor(backgroundColor);
-        mBackground.setBounds(itemView.getRight() + (int) dX, itemView.getTop(), itemView.getRight(), itemView.getBottom());
+        mBackground.setBounds(itemView.getLeft() + (int) dX, itemView.getTop(), itemView.getLeft(), itemView.getBottom());
         mBackground.draw(c);
 
         int deleteIconTop = itemView.getTop() + (itemHeight - intrinsicHeight) / 2;
         int deleteIconMargin = (itemHeight - intrinsicHeight) / 2;
-        int deleteIconLeft = itemView.getRight() - deleteIconMargin - intrinsicWidth;
-        int deleteIconRight = itemView.getRight() - deleteIconMargin;
+        int deleteIconRight = itemView.getLeft() + deleteIconMargin + intrinsicWidth;
+        int deleteIconLeft = itemView.getLeft() + deleteIconMargin;
         int deleteIconBottom = deleteIconTop + intrinsicHeight;
 
 
-        deleteDrawable.setBounds(deleteIconLeft, deleteIconTop, deleteIconRight, deleteIconBottom);
-        deleteDrawable.draw(c);
+        editDrawable.setBounds(deleteIconLeft, deleteIconTop, deleteIconRight, deleteIconBottom);
+        editDrawable.draw(c);
 
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
 

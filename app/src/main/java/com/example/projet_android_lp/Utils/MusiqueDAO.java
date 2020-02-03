@@ -7,6 +7,7 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Transaction;
+import androidx.room.Update;
 
 import com.example.projet_android_lp.Models.Artiste;
 import com.example.projet_android_lp.Models.ArtisteWithMusiques;
@@ -22,6 +23,9 @@ public interface MusiqueDAO {
     @Delete
     void delete(Musique musique);
 
+    @Update
+    void update(Musique musique);
+
     @Query("DELETE FROM musique_table")
     void deleteAll();
 
@@ -33,6 +37,9 @@ public interface MusiqueDAO {
 
     @Query("SELECT count(*) from musique_table")
     LiveData<Integer> nbElementsLD();
+
+    @Query("SELECT * FROM musique_table WHERE id=:id LIMIT 1")
+    Musique getMusiqueById(Long id);
 
     @Transaction
     @Query("SELECT * FROM artiste_table")

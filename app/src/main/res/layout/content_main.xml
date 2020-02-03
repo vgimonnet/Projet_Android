@@ -10,6 +10,16 @@
     tools:context=".MainActivity"
     tools:showIn="@layout/activity_main">
 
+    <SearchView
+        android:id="@+id/searchViewTitre"
+        android:layout_width="255dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="80dp"
+        android:layout_marginTop="160dp"
+        android:background="@android:color/background_light"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <Button
         android:id="@+id/btToutSupprimer"
         android:layout_width="206dp"
@@ -30,17 +40,18 @@
         android:id="@+id/recyclerViewMusic"
         android:layout_width="397dp"
         android:layout_height="460dp"
-        android:layout_marginTop="208dp"
+        android:layout_marginTop="228dp"
         android:background="#edb25f"
         android:clipToPadding="false"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/txtBoxNbMusique"
-        android:layout_width="223dp"
-        android:layout_height="38dp"
+        android:layout_width="229dp"
+        android:layout_height="30dp"
         android:text="TextView"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         app:layout_constraintBottom_toBottomOf="@+id/recyclerViewMusic"
@@ -49,52 +60,36 @@
         app:layout_constraintTop_toBottomOf="@+id/btToutSupprimer"
         app:layout_constraintVertical_bias="0.014" />
 
-    <EditText
-        android:id="@+id/txtBoxSearchArtist"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="108dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="Artiste"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <EditText
-        android:id="@+id/txtBoxSearchTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="152dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="Titre"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/btSearchArtist"
-        android:layout_width="98dp"
+    <SearchView
+        android:id="@+id/searchViewArtiste"
+        android:layout_width="255dp"
         android:layout_height="50dp"
-        android:layout_marginTop="100dp"
-        android:layout_marginEnd="4dp"
-        android:background="@drawable/radius_button"
-        android:text="Rechercher"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="80dp"
+        android:layout_marginTop="104dp"
+        android:background="@android:color/background_light"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/btSearchTitle"
-        android:layout_width="97dp"
-        android:layout_height="52dp"
-        android:layout_marginTop="152dp"
-        android:layout_marginEnd="4dp"
-        android:background="@drawable/radius_button"
-        android:text="Rechercher"
+    <TextView
+        android:id="@+id/lblSearchArtiste"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="120dp"
+        android:text="Artiste :"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/lblSearchTitre"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="176dp"
+        android:text="Titre :"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

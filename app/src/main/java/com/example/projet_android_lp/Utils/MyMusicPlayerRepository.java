@@ -87,6 +87,25 @@ public class MyMusicPlayerRepository {
         }
     }
 
+    public void updateMusique (Musique musique) {
+        new updateMusiqueAsyncTask(musiqueDAO).execute(musique);
+    }
+
+    private static class updateMusiqueAsyncTask extends AsyncTask<Musique, Void, Void> {
+
+        private MusiqueDAO mAsyncTaskDao;
+
+        updateMusiqueAsyncTask(MusiqueDAO dao) {
+            mAsyncTaskDao = dao;
+        }
+
+        @Override
+        protected Void doInBackground(final Musique... params) {
+            mAsyncTaskDao.update(params[0]);
+            return null;
+        }
+    }
+
 
     public void deleteAllMusiques(){
         new deleteAllMusiquesAsyncTask(musiqueDAO).execute();
@@ -112,6 +131,26 @@ public class MyMusicPlayerRepository {
             Log.d("test", "pb getNbMusiques");
         }
         return null;
+    }
+
+    public Musique getMusiqueById(Long id){
+        try {
+            return new getMusiqueByIdAsync(musiqueDAO).execute(id).get();
+        }catch (Exception e){
+            Log.d("MesLogs", "pb get");
+        }
+        return null;
+    }
+
+    private static class getMusiqueByIdAsync extends AsyncTask<Long, Void, Musique>{
+        private MusiqueDAO mAsyncTaskDao;
+
+        getMusiqueByIdAsync(MusiqueDAO dao){mAsyncTaskDao = dao;}
+
+        @Override
+        protected Musique doInBackground(Long... params){
+            return mAsyncTaskDao.getMusiqueById(params[0]);
+        }
     }
 
     private static class getNbMusiquesAsync extends AsyncTask<Void,Void,Integer>{

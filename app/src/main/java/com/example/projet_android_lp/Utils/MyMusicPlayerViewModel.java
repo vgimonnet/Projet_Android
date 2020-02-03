@@ -38,6 +38,8 @@ public class MyMusicPlayerViewModel  extends AndroidViewModel {
     public void deleteMusique(Musique musique) { mRepository.deleteMusique(musique); }
     public void deleteAllMusiques(){ mRepository.deleteAllMusiques(); }
     public Integer nbMusiques(){ return mRepository.getNbMusiques();}
+    public void updateMusique(Musique musique) { mRepository.updateMusique(musique); }
+    public Musique getMusiqueById(Long id) { return mRepository.getMusiqueById(id); }
 
     public LiveData<List<Artiste>> getAllArtistes() { return allArtistes; }
     public LiveData<Integer> getNbArtistes(){ return nbArtistes; }

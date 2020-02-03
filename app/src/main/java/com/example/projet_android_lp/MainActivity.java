@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 
 import com.example.projet_android_lp.Activities.AddMusicNewActivity;
+import com.example.projet_android_lp.Activities.ArtistNewActivity;
 import com.example.projet_android_lp.Activities.EditMusicNewActivity;
 import com.example.projet_android_lp.Decorations.SwipeToDeleteCallback;
 import com.example.projet_android_lp.Decorations.SwipeToEditCallback;
@@ -62,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
     private MyMusicPlayerViewModel myMusicPlayerViewModel;
     public static final int NEW_MYMUSICPLAYER_ACTIVITY_REQUEST_CODE = 1;
     public static final int EDIT_MYMUSICPLAYER_ACTIVITY_REQUEST_CODE = 2;
+    public static final int ARTIST_MYMUSICPLAYER_ACTIVITY_REQUEST_CODE = 3;
     public ConstraintLayout constraintLayout;
     public MusicListAdapter adapter;
     public RecyclerView recyclerView;
@@ -190,7 +192,9 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_artiste) {
+            Intent intent = new Intent(MainActivity.this, ArtistNewActivity.class);
+            startActivityForResult(intent, ARTIST_MYMUSICPLAYER_ACTIVITY_REQUEST_CODE);
             return true;
         }
 
@@ -242,7 +246,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             }
-        } else {
+        } else if (requestCode == NEW_MYMUSICPLAYER_ACTIVITY_REQUEST_CODE && resultCode == RESULT_CANCELED){
             Toast.makeText(
                     getApplicationContext(),
                     R.string.empty_not_saved,
@@ -494,8 +498,6 @@ public class MainActivity extends AppCompatActivity {
         TextView lblgenre = popupView.findViewById(R.id.lblGenreInfoContenu);
 
         ImageButton closeButton = popupView.findViewById(R.id.ib_close);
-
-        ;
 
         // create the popup window
         int width = LinearLayout.LayoutParams.WRAP_CONTENT;

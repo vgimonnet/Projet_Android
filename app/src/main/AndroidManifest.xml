@@ -21,6 +21,7 @@
         </activity>
         <activity android:name=".Activities.AddMusicNewActivity"></activity>
         <activity android:name=".Activities.EditMusicNewActivity"></activity>
+        <activity android:name=".Activities.ArtistNewActivity"></activity>
     </application>
 
 </manifest>

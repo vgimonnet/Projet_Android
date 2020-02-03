@@ -3,9 +3,13 @@ package com.example.projet_android_lp.Utils;
 import android.app.Application;
 import android.content.Context;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,6 +32,7 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.Musi
         private final TextView txtTitre;
         private final TextView txtArtiste;
 
+
         private MusicViewHolder(View itemView) {
             super(itemView);
             txtArtiste = itemView.findViewById(R.id.lblArtisteItemMusicData);
@@ -36,16 +41,12 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.Musi
     }
 
     private final LayoutInflater mInflater;
-    private List<Musique> mMusiques; // Cached copy of musiques
-    private List<Artiste> mArtistes; // Cached copy of artistes
+    private List<Musique> mMusiques;
+    private List<Artiste> mArtistes;
     private ArrayList<Musique> mMusiquesCopy; // Cached copy of musiques
     private MyMusicPlayerViewModel myMusicPlayerViewModel;
     private boolean search;
 
-    /*public MusicListAdapter(Context context, MyMusicPlayerViewModel viewModel) {
-        mInflater = LayoutInflater.from(context);
-        myMusicPlayerViewModel = viewModel;
-    }*/
 
     public MusicListAdapter(Context context) {
         mInflater = LayoutInflater.from(context);
@@ -177,6 +178,8 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.Musi
         notifyDataSetChanged();
     }
 
-
+    public Musique getCurrentMusique(View view, int position){
+        return mMusiques.get(position);
+    }
 
 }

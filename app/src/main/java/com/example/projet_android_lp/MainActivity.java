@@ -3,6 +3,7 @@ package com.example.projet_android_lp;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
@@ -15,6 +16,7 @@ import com.example.projet_android_lp.Models.Artiste;
 import com.example.projet_android_lp.Models.Musique;
 import com.example.projet_android_lp.Utils.MusicListAdapter;
 import com.example.projet_android_lp.Utils.MyMusicPlayerViewModel;
+import com.example.projet_android_lp.Utils.RecyclerItemClickListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -31,9 +33,15 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -84,6 +92,28 @@ public class MainActivity extends AppCompatActivity {
         adapter = new MusicListAdapter(this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        recyclerView.addOnItemTouchListener(
+                new RecyclerItemClickListener(getApplicationContext(), recyclerView ,new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override public void onItemClick(View view, int position) {
+                        Musique currentMusique = adapter.getCurrentMusique(view, position);
+                        if(currentMusique != null){
+                            openPopUpDetailMusique(view, currentMusique);
+                        }else{
+                            Toast.makeText(getApplicationContext(), "Aucune information pour cette musique", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override public void onLongItemClick(View view, int position) {
+                        Musique currentMusique = adapter.getCurrentMusique(view, position);
+                        if(currentMusique != null){
+                            openPopUpDetailMusique(view, currentMusique);
+                        }else{
+                            Toast.makeText(getApplicationContext(), "Aucune information pour cette musique", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                })
+        );
 
         recyclerView.addItemDecoration(new VerticalSpaceItemDecoration(VERTICAL_ITEM_SPACE));
         myMusicPlayerViewModel = ViewModelProviders.of(this).get(MyMusicPlayerViewModel.class);
@@ -449,6 +479,62 @@ public class MainActivity extends AppCompatActivity {
             idArtiste = artiste.getArtisteId();
         }
         return idArtiste-1;
+    }
+
+    public void openPopUpDetailMusique(View view, Musique musique){
+
+        LayoutInflater mInflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        View popupView = mInflater.inflate(R.layout.popup_window, null);
+
+        TextView lbltitre = popupView.findViewById(R.id.lblTitreInfoContenu);
+        TextView lblartiste = popupView.findViewById(R.id.lblArtisteInfoContenu);
+        TextView lblalbum = popupView.findViewById(R.id.lblAlbumInfoContenu);
+        TextView lblannee = popupView.findViewById(R.id.lblAnneeInfoContenu);
+        TextView lblgenre = popupView.findViewById(R.id.lblGenreInfoContenu);
+
+        ImageButton closeButton = popupView.findViewById(R.id.ib_close);
+
+        ;
+
+        // create the popup window
+        int width = LinearLayout.LayoutParams.WRAP_CONTENT;
+        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        boolean focusable = true; // lets taps outside the popup also dismiss it
+        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
+
+        popupWindow.setBackgroundDrawable(new ColorDrawable(Color.rgb(179, 217, 255)));
+
+        lbltitre.setText(musique.getTitre());
+        Artiste artiste = myMusicPlayerViewModel.getArtisteById(musique.getArtisteRefId() + 1);
+        if(artiste != null){
+            lblartiste.setText(artiste.getNom());
+        }else{
+            lblartiste.setText("Artiste inconnu");
+        }
+        lblalbum.setText(musique.getAlbum());
+        lblannee.setText(Integer.toString(musique.getAnnee()));
+        lblgenre.setText(musique.getGenre());
+
+        closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                popupWindow.dismiss();
+            }
+        });
+
+        // show the popup window
+        // which view you pass in doesn't matter, it is only used for the window tolken
+        popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+
+        // dismiss the popup window when touched
+        popupView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                popupWindow.dismiss();
+                return true;
+            }
+        });
     }
 
 }

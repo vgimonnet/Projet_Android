@@ -3,6 +3,7 @@ package com.example.projet_android_lp.Activities;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +31,7 @@ public class ArtistNewActivity extends AppCompatActivity {
     private ArtisteListAdapter adapter;
     private MyMusicPlayerViewModel myMusicPlayerViewModel;
     private static final int VERTICAL_ITEM_SPACE = 48;
+    private SearchView searchView;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -77,6 +79,22 @@ public class ArtistNewActivity extends AppCompatActivity {
             @Override
             public void onChanged(@Nullable final List<Musique> musiques) {
                 adapter.setMusiques(musiques);
+            }
+        });
+
+        //Mise en place de la recherche par titre
+        searchView = findViewById(R.id.searchViewArtisteMenu);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                adapter.filterArtiste(getApplicationContext(), query);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                adapter.filterArtiste(getApplicationContext() ,newText);
+                return true;
             }
         });
 

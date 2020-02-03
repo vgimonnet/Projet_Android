@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProviders;
@@ -96,4 +97,36 @@ public class ArtisteListAdapter extends RecyclerView.Adapter<ArtisteListAdapter.
             return mArtistes.size();
         else return 0;
     }
+
+    public void filterArtiste(Context context, String text){
+        if (!search){
+            search = true;
+            for(Artiste item: mArtistes){
+                mArtistesCopy.add(item);
+            }
+        }
+
+        if(text.isEmpty()){
+            mArtistes.clear();
+            mArtistes.addAll(mArtistesCopy);
+            search = true;
+        } else{
+            ArrayList<Artiste> result = new ArrayList<>();
+            text = text.toLowerCase();
+
+            for(Artiste item: mArtistes){
+                if(item.getNom().toLowerCase().contains(text)){
+                    result.add(item);
+                }
+            }
+            if(result.size()==0){
+                Toast.makeText(context, "Aucun artiste ne correspond à cette recherche", Toast.LENGTH_SHORT).show();
+            }else{
+                mArtistes.clear();
+                mArtistes.addAll(result);
+            }
+        }
+        notifyDataSetChanged();
+    }
+
 }

@@ -137,10 +137,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onChanged(List<Artiste> artistes) {
                 adapter.setArtistes(artistes);
-                for (Artiste a:artistes
-                     ) {
-                    Log.d("test", a.getNom()+" "+ Long.toString(a.getArtisteId()));
-                }
             }
         });
 
@@ -210,14 +206,15 @@ public class MainActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        Log.d("test", Integer.toString(requestCode));
-
         if (requestCode == NEW_MYMUSICPLAYER_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
             Long idArtiste = null;
             String nomArtiste = data.getStringExtra("1");
             String titre = data.getStringExtra("2");
             String album = data.getStringExtra("3");
-            int annee = Integer.parseInt(data.getStringExtra("4"));
+            //int annee = 0;
+            //if(data.getStringExtra("4") != null){
+                 int annee = Integer.parseInt(data.getStringExtra("4"));
+            //}
             String genre = data.getStringExtra("5");
 
             if(nomArtiste != null && titre != null){
@@ -544,5 +541,4 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
 }

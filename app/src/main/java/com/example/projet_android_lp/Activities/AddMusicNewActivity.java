@@ -3,6 +3,7 @@ package com.example.projet_android_lp.Activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -41,7 +42,7 @@ public class AddMusicNewActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 Intent replyIntent = new Intent();
-                if (TextUtils.isEmpty(txtBoxTitre.getText().toString()) || TextUtils.isEmpty(txtBoxArtiste.getText().toString()) ) {
+                if (TextUtils.isEmpty(txtBoxTitre.getText().toString()) || TextUtils.isEmpty(txtBoxArtiste.getText().toString()) || TextUtils.isEmpty(txtBoxAnnee.getText().toString()) || TextUtils.isEmpty(txtBoxAlbum.getText().toString())) {
                     setResult(RESULT_CANCELED, replyIntent);
                 } else {
                     String artiste = txtBoxArtiste.getText().toString();

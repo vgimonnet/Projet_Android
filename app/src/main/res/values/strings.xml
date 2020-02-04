@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Gestionnaire de musiques</string>
+    <string name="app_name">MyMusics</string>
     <string name="action_settings">Settings</string>
     <string name="action_artiste">Artistes</string>
     <string name="empty_not_saved">La musique est vide, il est impossible de l\'enregistrer.</string>

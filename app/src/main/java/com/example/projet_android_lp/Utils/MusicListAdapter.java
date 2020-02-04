@@ -67,7 +67,8 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.Musi
             Musique current = mMusiques.get(position);
             long id = current.getArtisteRefId();
 
-            Artiste artiste = mArtistes.get((int)id);
+            Artiste artiste = myMusicPlayerViewModel.getArtisteById(id);
+            //Artiste artiste = mArtistes.get((int)id);
             if (artiste != null){
                 holder.txtArtiste.setText(artiste.getNom());
             }else{
@@ -158,7 +159,7 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.Musi
         } else{
             Artiste artiste = myMusicPlayerViewModel.getArtisteByName(text);
             if (artiste != null){
-                Long idArtiste = artiste.getArtisteId() - 1;
+                Long idArtiste = artiste.getArtisteId();
                 ArrayList<Musique> result = new ArrayList<>();
                 text = text.toLowerCase();
 

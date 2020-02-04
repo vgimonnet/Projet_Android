@@ -1,8 +1,17 @@
 package com.example.projet_android_lp.Activities;
 
+import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -16,6 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.projet_android_lp.Decorations.VerticalSpaceItemDecoration;
 import com.example.projet_android_lp.Models.Artiste;
+import com.example.projet_android_lp.Models.ArtisteWithMusiques;
 import com.example.projet_android_lp.Models.Musique;
 import com.example.projet_android_lp.R;
 import com.example.projet_android_lp.Utils.ArtisteListAdapter;
@@ -32,6 +42,7 @@ public class ArtistNewActivity extends AppCompatActivity {
     private MyMusicPlayerViewModel myMusicPlayerViewModel;
     private static final int VERTICAL_ITEM_SPACE = 48;
     private SearchView searchView;
+    private List<ArtisteWithMusiques> artisteWithMusiquesList;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -43,27 +54,27 @@ public class ArtistNewActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        /*recyclerView.addOnItemTouchListener(
+        recyclerView.addOnItemTouchListener(
                 new RecyclerItemClickListener(getApplicationContext(), recyclerView ,new RecyclerItemClickListener.OnItemClickListener() {
                     @Override public void onItemClick(View view, int position) {
-                        Musique currentMusique = adapter.getCurrentMusique(view, position);
-                        if(currentMusique != null){
-                            openPopUpDetailMusique(view, currentMusique);
+                        Artiste currentArtiste = adapter.getCurrentArtiste(view, position);
+                        if(currentArtiste != null){
+                            openPopUpDetailMusique(view, currentArtiste);
                         }else{
                             Toast.makeText(getApplicationContext(), "Aucune information pour cette musique", Toast.LENGTH_SHORT).show();
                         }
                     }
 
                     @Override public void onLongItemClick(View view, int position) {
-                        Musique currentMusique = adapter.getCurrentMusique(view, position);
-                        if(currentMusique != null){
-                            openPopUpDetailMusique(view, currentMusique);
+                        Artiste currentArtiste = adapter.getCurrentArtiste(view, position);
+                        if(currentArtiste != null){
+                            openPopUpDetailMusique(view, currentArtiste);
                         }else{
                             Toast.makeText(getApplicationContext(), "Aucune information pour cette musique", Toast.LENGTH_SHORT).show();
                         }
                     }
                 })
-        );*/
+        );
 
         recyclerView.addItemDecoration(new VerticalSpaceItemDecoration(VERTICAL_ITEM_SPACE));
         myMusicPlayerViewModel = ViewModelProviders.of(this).get(MyMusicPlayerViewModel.class);
@@ -81,6 +92,20 @@ public class ArtistNewActivity extends AppCompatActivity {
                 adapter.setMusiques(musiques);
             }
         });
+
+        myMusicPlayerViewModel.getArtisteWithMusiquesLD().observe(this, new Observer<List<ArtisteWithMusiques>>() {
+            @Override
+            public void onChanged(@Nullable final List<ArtisteWithMusiques> artisteWithMusiques) {
+                adapter.setArtisteWithMusiquesList(artisteWithMusiques);
+                if (artisteWithMusiquesList != null){
+                    artisteWithMusiquesList.clear();
+                    artisteWithMusiquesList.addAll(artisteWithMusiques);
+                }
+
+            }
+        });
+
+
 
         //Mise en place de la recherche par titre
         searchView = findViewById(R.id.searchViewArtisteMenu);
@@ -102,6 +127,81 @@ public class ArtistNewActivity extends AppCompatActivity {
         btnClose.setOnClickListener(new View.OnClickListener(){
             public void onClick(View view) {finish();}
         });
+    }
 
+    public void openPopUpDetailMusique(View view, final Artiste artiste){
+
+        LayoutInflater mInflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        View popupView = mInflater.inflate(R.layout.popup_window_delete_artist, null);
+
+        TextView lblMessage = popupView.findViewById(R.id.lblMessage);
+
+        ImageButton closeButton = popupView.findViewById(R.id.ib_closeDelete);
+        Button btAnnuler = popupView.findViewById(R.id.btAnnulerDelete);
+        Button btConfirmer = popupView.findViewById(R.id.btConfirmerDelete);
+
+        // create the popup window
+        int width = LinearLayout.LayoutParams.WRAP_CONTENT;
+        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        boolean focusable = true; // lets taps outside the popup also dismiss it
+        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
+
+        popupWindow.setBackgroundDrawable(new ColorDrawable(Color.rgb(179, 217, 255)));
+
+        String nomArtiste = artiste.getNom();
+
+        final List<ArtisteWithMusiques> liste = myMusicPlayerViewModel.getArtisteWithMusiques();
+        Integer nbmusiques = 0;
+
+        for (ArtisteWithMusiques a : liste) {
+            if (a.artiste.getArtisteId() == artiste.getArtisteId()){
+                nbmusiques = a.musiques.size();
+            }
+        }
+
+        lblMessage.setText("Voulez-vous vraiment supprimer l'artiste " + nomArtiste + " ainsi que toutes ces musiques, soit " + Integer.toString(nbmusiques) + " musiques.");
+
+        btAnnuler.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popupWindow.dismiss();
+            }
+        });
+
+        closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                popupWindow.dismiss();
+            }
+        });
+
+        btConfirmer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                for (ArtisteWithMusiques a: liste) {
+                    if (a.artiste.getArtisteId() == artiste.getArtisteId()){
+                        for (Musique m: a.musiques) {
+                            myMusicPlayerViewModel.deleteMusique(m);
+                        }
+                    }
+                }
+                myMusicPlayerViewModel.deleteArtiste(artiste);
+                popupWindow.dismiss();
+            }
+        });
+
+        // show the popup window
+        // which view you pass in doesn't matter, it is only used for the window tolken
+        popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+
+        // dismiss the popup window when touched
+        popupView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                popupWindow.dismiss();
+                return true;
+            }
+        });
     }
 }

@@ -14,6 +14,7 @@ import com.example.projet_android_lp.Decorations.SwipeToDeleteCallback;
 import com.example.projet_android_lp.Decorations.SwipeToEditCallback;
 import com.example.projet_android_lp.Decorations.VerticalSpaceItemDecoration;
 import com.example.projet_android_lp.Models.Artiste;
+import com.example.projet_android_lp.Models.ArtisteWithMusiques;
 import com.example.projet_android_lp.Models.Musique;
 import com.example.projet_android_lp.Utils.MusicListAdapter;
 import com.example.projet_android_lp.Utils.MyMusicPlayerViewModel;
@@ -27,6 +28,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -135,6 +137,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onChanged(List<Artiste> artistes) {
                 adapter.setArtistes(artistes);
+                for (Artiste a:artistes
+                     ) {
+                    Log.d("test", a.getNom()+" "+ Long.toString(a.getArtisteId()));
+                }
             }
         });
 
@@ -448,7 +454,7 @@ public class MainActivity extends AppCompatActivity {
                 final int position = viewHolder.getAdapterPosition();
                 final Musique musique = adapter.getData().get(position);
 
-                Long idArtiste = musique.getArtisteRefId() + 1;
+                Long idArtiste = musique.getArtisteRefId() ;
 
                 Artiste artiste = myMusicPlayerViewModel.getArtisteById(idArtiste);
 
@@ -482,7 +488,7 @@ public class MainActivity extends AppCompatActivity {
             artiste = myMusicPlayerViewModel.getArtisteByName(nomArtiste);
             idArtiste = artiste.getArtisteId();
         }
-        return idArtiste-1;
+        return idArtiste;
     }
 
     public void openPopUpDetailMusique(View view, Musique musique){
@@ -508,7 +514,7 @@ public class MainActivity extends AppCompatActivity {
         popupWindow.setBackgroundDrawable(new ColorDrawable(Color.rgb(179, 217, 255)));
 
         lbltitre.setText(musique.getTitre());
-        Artiste artiste = myMusicPlayerViewModel.getArtisteById(musique.getArtisteRefId() + 1);
+        Artiste artiste = myMusicPlayerViewModel.getArtisteById(musique.getArtisteRefId());
         if(artiste != null){
             lblartiste.setText(artiste.getNom());
         }else{

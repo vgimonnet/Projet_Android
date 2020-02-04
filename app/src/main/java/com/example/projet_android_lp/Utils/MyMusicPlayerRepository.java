@@ -186,6 +186,25 @@ public class MyMusicPlayerRepository {
         }
     }
 
+    public void deleteArtiste (Artiste artiste) {
+        new deleteArtisteAsyncTask(artisteDAO).execute(artiste);
+    }
+
+    private static class deleteArtisteAsyncTask extends AsyncTask<Artiste, Void, Void> {
+
+        private ArtisteDAO mAsyncTaskDao;
+
+        deleteArtisteAsyncTask(ArtisteDAO dao) {
+            mAsyncTaskDao = dao;
+        }
+
+        @Override
+        protected Void doInBackground(final Artiste... params) {
+            mAsyncTaskDao.delete(params[0]);
+            return null;
+        }
+    }
+
 
     public void deleteAllArtistes(){
         new deleteAllArtistesAsyncTask(artisteDAO).execute();
@@ -263,6 +282,26 @@ public class MyMusicPlayerRepository {
         @Override
         protected Artiste doInBackground(String... params){
             return mAsyncTaskDao.getArtisteByNom(params[0]);
+        }
+    }
+
+    public List<ArtisteWithMusiques> getArtisteWithMusique(){
+        try {
+            return new getArtisteWithMusiquesAsync(artisteDAO).execute().get();
+        }catch (Exception e){
+            Log.d("MesLogs", "pb getArtisteWithMusiques");
+        }
+        return null;
+    }
+
+    private static class getArtisteWithMusiquesAsync extends AsyncTask<Void, Void, List<ArtisteWithMusiques>>{
+        private ArtisteDAO mAsyncTaskDao;
+
+        getArtisteWithMusiquesAsync(ArtisteDAO dao){mAsyncTaskDao = dao;}
+
+        @Override
+        protected List<ArtisteWithMusiques> doInBackground(Void... params){
+            return mAsyncTaskDao.getArtisteWithPlaylists();
         }
     }
 }

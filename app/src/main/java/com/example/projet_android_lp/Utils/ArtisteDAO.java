@@ -2,6 +2,7 @@ package com.example.projet_android_lp.Utils;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Transaction;
@@ -16,6 +17,9 @@ import java.util.List;
 public interface ArtisteDAO {
     @Insert
     void insertArtiste(Artiste artiste);
+
+    @Delete
+    void delete(Artiste artiste);
 
     @Query("DELETE FROM artiste_table")
     void deleteAllArtiste();

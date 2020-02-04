@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.projet_android_lp.Models.Artiste;
+import com.example.projet_android_lp.Models.ArtisteWithMusiques;
 import com.example.projet_android_lp.Models.Musique;
 import com.example.projet_android_lp.R;
 
@@ -36,6 +37,7 @@ public class ArtisteListAdapter extends RecyclerView.Adapter<ArtisteListAdapter.
     private List<Musique> mMusiques;
     private List<Artiste> mArtistes;
     private ArrayList<Artiste> mArtistesCopy; // Cached copy of musiques
+    private List<ArtisteWithMusiques> artisteWithMusiquesList;
     private MyMusicPlayerViewModel myMusicPlayerViewModel;
     private boolean search;
 
@@ -57,7 +59,23 @@ public class ArtisteListAdapter extends RecyclerView.Adapter<ArtisteListAdapter.
     public void onBindViewHolder(ArtisteListAdapter.ArtistViewHolder holder, int position) {
         if (mArtistes != null) {
             Artiste current = mArtistes.get(position);
-            long id = current.getArtisteId() - 1;
+
+            if(artisteWithMusiquesList != null) {
+                for (ArtisteWithMusiques a: artisteWithMusiquesList
+                ) {
+                    if (a.artiste.getArtisteId() == current.getArtisteId()){
+                        holder.txtArtiste.setText(current.getNom());
+                        holder.txtNbMusiques.setText(Integer.toString(a.musiques.size()));
+                    }
+                }
+            }else{
+                holder.txtArtiste.setText("Non renseigné");
+                holder.txtNbMusiques.setText("Non renseigné");
+            }
+
+
+
+           /* long id = current.getArtisteId() - 1;
             int nbMusiques = 0;
 
             if (mMusiques != null){
@@ -74,7 +92,7 @@ public class ArtisteListAdapter extends RecyclerView.Adapter<ArtisteListAdapter.
             }else{
                 holder.txtArtiste.setText("Non renseigné");
                 holder.txtNbMusiques.setText("Non renseigné");
-            }
+            }*/
 
         } else {
             holder.txtArtiste.setText("Aucun artiste");
@@ -88,6 +106,11 @@ public class ArtisteListAdapter extends RecyclerView.Adapter<ArtisteListAdapter.
 
     public void setArtistes(List<Artiste> artistes){
         mArtistes = artistes;
+        notifyDataSetChanged();
+    }
+
+    public void setArtisteWithMusiquesList(List<ArtisteWithMusiques> artisteWithMusiques){
+        artisteWithMusiquesList = artisteWithMusiques;
         notifyDataSetChanged();
     }
 
@@ -127,6 +150,10 @@ public class ArtisteListAdapter extends RecyclerView.Adapter<ArtisteListAdapter.
             }
         }
         notifyDataSetChanged();
+    }
+
+    public Artiste getCurrentArtiste(View view, int position){
+        return mArtistes.get(position);
     }
 
 }

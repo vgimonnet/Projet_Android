@@ -43,11 +43,13 @@ public class MyMusicPlayerViewModel  extends AndroidViewModel {
 
     public LiveData<List<Artiste>> getAllArtistes() { return allArtistes; }
     public LiveData<Integer> getNbArtistes(){ return nbArtistes; }
+    public void deleteArtiste(Artiste artiste){ mRepository.deleteArtiste(artiste); }
     public void insertArtiste(Artiste artiste) { mRepository.insertArtiste(artiste); }
     public void deleteAllArtistes(){ mRepository.deleteAllArtistes(); }
     public Integer nbArtistes(){ return mRepository.getNbArtiste();}
 
-    public LiveData<List<ArtisteWithMusiques>> getArtisteWithMusiques() { return artisteWithMusiques; }
+    public LiveData<List<ArtisteWithMusiques>> getArtisteWithMusiquesLD() { return artisteWithMusiques; }
+    public List<ArtisteWithMusiques> getArtisteWithMusiques() { return mRepository.getArtisteWithMusique(); }
     public Artiste getArtisteById(long id){return mRepository.getArtisteById(id);}
     public Artiste getArtisteByName(String name){return mRepository.getArtisteByName(name);}
 
